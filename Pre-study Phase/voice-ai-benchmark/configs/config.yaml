@@ -1,0 +1,26 @@
+apis:
+  - name: google_speech
+    type: cloud
+    mode: local_placeholder
+    streaming: true
+    cost_per_min: 0.006
+  - name: azure_speech
+    type: cloud
+    mode: local_placeholder
+    streaming: true
+    cost_per_min: 0.007
+  - name: deepgram
+    type: cloud
+    mode: local_placeholder
+    streaming: true
+    cost_per_min: 0.005
+  - name: assemblyai
+    type: cloud
+    mode: local_placeholder
+    streaming: true
+    cost_per_min: 0.006
+  - name: whisper_local
+    type: local
+    mode: local
+    streaming: false
+    cost_per_min: 0.0

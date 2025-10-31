@@ -1,0 +1,45 @@
+[
+    {
+        "api": "google_speech",
+        "wer": null,
+        "latency_ms": null,
+        "status": "failed",
+        "error": "name 'sf' is not defined",
+        "timestamp": "2025-10-24 17:11:34"
+    },
+    {
+        "api": "azure_speech",
+        "wer": null,
+        "latency_ms": null,
+        "status": "failed",
+        "error": "name 'sf' is not defined",
+        "timestamp": "2025-10-24 17:11:34"
+    },
+    {
+        "api": "deepgram",
+        "wer": null,
+        "latency_ms": null,
+        "status": "failed",
+        "error": "name 'sf' is not defined",
+        "timestamp": "2025-10-24 17:11:34"
+    },
+    {
+        "api": "assemblyai",
+        "wer": null,
+        "latency_ms": null,
+        "status": "failed",
+        "error": "name 'sf' is not defined",
+        "timestamp": "2025-10-24 17:11:34"
+    },
+    {
+        "api": "whisper_local",
+        "wer": null,
+        "latency_ms": null,
+        "status": "failed",
+        "error": "name 'sf' is not defined",
+        "timestamp": "2025-10-24 17:11:34"
+    }
+
+
+
+]

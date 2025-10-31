@@ -1,0 +1,8 @@
+torch
+jiwer
+pydantic
+PyYAML
+soundfile
+python-dotenv
+whisper
+numpy

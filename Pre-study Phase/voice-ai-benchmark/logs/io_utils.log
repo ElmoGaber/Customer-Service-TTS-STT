@@ -1,0 +1,60 @@
+2025-10-24 17:10:30,969 - io_utils - ERROR - Error loading audio file: name 'sf' is not defined
+Traceback (most recent call last):
+  File "D:\Desktop\Level 4 Semester 1\project\Pre-study Phase\voice-ai-benchmark\src\utils\io_utils.py", line 22, in load_audio_file
+    audio_data, sample_rate = sf.read(file_path)
+                              ^^
+NameError: name 'sf' is not defined
+2025-10-24 17:10:30,973 - io_utils - ERROR - Error loading audio file: name 'sf' is not defined
+Traceback (most recent call last):
+  File "D:\Desktop\Level 4 Semester 1\project\Pre-study Phase\voice-ai-benchmark\src\utils\io_utils.py", line 22, in load_audio_file
+    audio_data, sample_rate = sf.read(file_path)
+                              ^^
+NameError: name 'sf' is not defined
+2025-10-24 17:10:30,977 - io_utils - ERROR - Error loading audio file: name 'sf' is not defined
+Traceback (most recent call last):
+  File "D:\Desktop\Level 4 Semester 1\project\Pre-study Phase\voice-ai-benchmark\src\utils\io_utils.py", line 22, in load_audio_file
+    audio_data, sample_rate = sf.read(file_path)
+                              ^^
+NameError: name 'sf' is not defined
+2025-10-24 17:10:30,980 - io_utils - ERROR - Error loading audio file: name 'sf' is not defined
+Traceback (most recent call last):
+  File "D:\Desktop\Level 4 Semester 1\project\Pre-study Phase\voice-ai-benchmark\src\utils\io_utils.py", line 22, in load_audio_file
+    audio_data, sample_rate = sf.read(file_path)
+                              ^^
+NameError: name 'sf' is not defined
+2025-10-24 17:10:30,984 - io_utils - ERROR - Error loading audio file: name 'sf' is not defined
+Traceback (most recent call last):
+  File "D:\Desktop\Level 4 Semester 1\project\Pre-study Phase\voice-ai-benchmark\src\utils\io_utils.py", line 22, in load_audio_file
+    audio_data, sample_rate = sf.read(file_path)
+                              ^^
+NameError: name 'sf' is not defined
+2025-10-24 17:11:34,540 - io_utils - ERROR - Error loading audio file: name 'sf' is not defined
+Traceback (most recent call last):
+  File "D:\Desktop\Level 4 Semester 1\project\Pre-study Phase\voice-ai-benchmark\src\utils\io_utils.py", line 22, in load_audio_file
+    audio_data, sample_rate = sf.read(file_path)
+                              ^^
+NameError: name 'sf' is not defined
+2025-10-24 17:11:34,543 - io_utils - ERROR - Error loading audio file: name 'sf' is not defined
+Traceback (most recent call last):
+  File "D:\Desktop\Level 4 Semester 1\project\Pre-study Phase\voice-ai-benchmark\src\utils\io_utils.py", line 22, in load_audio_file
+    audio_data, sample_rate = sf.read(file_path)
+                              ^^
+NameError: name 'sf' is not defined
+2025-10-24 17:11:34,547 - io_utils - ERROR - Error loading audio file: name 'sf' is not defined
+Traceback (most recent call last):
+  File "D:\Desktop\Level 4 Semester 1\project\Pre-study Phase\voice-ai-benchmark\src\utils\io_utils.py", line 22, in load_audio_file
+    audio_data, sample_rate = sf.read(file_path)
+                              ^^
+NameError: name 'sf' is not defined
+2025-10-24 17:11:34,549 - io_utils - ERROR - Error loading audio file: name 'sf' is not defined
+Traceback (most recent call last):
+  File "D:\Desktop\Level 4 Semester 1\project\Pre-study Phase\voice-ai-benchmark\src\utils\io_utils.py", line 22, in load_audio_file
+    audio_data, sample_rate = sf.read(file_path)
+                              ^^
+NameError: name 'sf' is not defined
+2025-10-24 17:11:34,552 - io_utils - ERROR - Error loading audio file: name 'sf' is not defined
+Traceback (most recent call last):
+  File "D:\Desktop\Level 4 Semester 1\project\Pre-study Phase\voice-ai-benchmark\src\utils\io_utils.py", line 22, in load_audio_file
+    audio_data, sample_rate = sf.read(file_path)
+                              ^^
+NameError: name 'sf' is not defined
