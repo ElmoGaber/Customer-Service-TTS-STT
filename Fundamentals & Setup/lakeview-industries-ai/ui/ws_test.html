@@ -1,0 +1,35 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>WS Echo Test</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 2rem; }
+  button, input { margin-right: .5rem; }
+  pre { background:#111; color:#eee; padding:1rem; border-radius:10px; max-height:50vh; overflow:auto; }
+</style>
+<h1>WebSocket Echo Test</h1>
+<p>
+  <button id="connect">Connect</button>
+  <button id="ping">Ping</button>
+  <input id="say" placeholder="message for say:" />
+  <button id="send">Send</button>
+</p>
+<pre id="log"></pre>
+<script>
+let ws;
+const logEl = document.getElementById('log');
+const log = (m) => { logEl.textContent += m + "\n"; logEl.scrollTop = logEl.scrollHeight; };
+
+document.getElementById('connect').onclick = () => {
+  ws = new WebSocket("ws://127.0.0.1:8000/api/realtime/ws");
+  ws.onopen = () => log("connected");
+  ws.onmessage = (e) => log("← " + e.data);
+  ws.onclose = () => log("closed");
+  ws.onerror = () => log("error");
+};
+
+document.getElementById('ping').onclick = () => ws && ws.send("ping");
+document.getElementById('send').onclick = () => {
+  const v = document.getElementById('say').value || "hello";
+  ws && ws.send("say: " + v);
+};
+</script>

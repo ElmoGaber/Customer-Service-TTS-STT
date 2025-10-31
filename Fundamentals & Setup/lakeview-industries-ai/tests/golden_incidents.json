@@ -1,0 +1,12 @@
+{
+  "incidents": [
+    {
+      "name": "slitter_tension_drop",
+      "input": "Slitter edge fray observed; speed reduced 30\u219225; tensions 100/90; noise up; PPE ok."
+    },
+    {
+      "name": "laminator_wrinkle",
+      "input": "Laminator A shows wrinkling after roll change; temp 180F; pressure 40 psi; scrap rising."
+    }
+  ]
+}

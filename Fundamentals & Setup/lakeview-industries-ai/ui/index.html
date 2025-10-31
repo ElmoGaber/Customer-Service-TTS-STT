@@ -1,0 +1,444 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Lakeview Industries AI — Hybrid STT</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Lakeview-inspired palette (tweak if you have exact brand hex) */
+    --brand-blue: #2c6ebe;      /* Lakeview wordmark blue */
+    --brand-blue-600:#1f5aa4;
+    --accent-green:#0db25b;     /* recording pulse */
+    --accent-amber:#f6c84c;     /* muted recording */
+    --bg:#f6f9ff;
+    --panel:#ffffff;
+    --border:#d9e2ef;
+    --text:#0f172a;
+    --muted:#667892;
+    --link:#0b4bdc;
+    --shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.10);
+  }
+
+  html,body{height:100%;}
+  body{
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    margin:0; background:var(--bg); color:var(--text);
+  }
+  .container{max-width:1120px;margin:28px auto;padding:0 20px;}
+
+  /* Header / Brand (original base rules) */
+  .header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;}
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand img{height:34px;width:auto;object-fit:contain}
+  .brandstack{display:flex;flex-direction:column;line-height:1;}
+  .lakeview{
+    font-family: Montserrat, Inter, sans-serif;
+    font-weight: 900; letter-spacing: .5px; text-transform: uppercase; color: var(--brand-blue);
+    font-size: 22px;
+  }
+  .industries{
+    font-family: Montserrat, Inter, sans-serif;
+    font-weight: 700; letter-spacing: .45em; text-transform: uppercase; color: var(--muted);
+    font-size: 11px; margin-top: 2px;
+  }
+  .status-bar{display:flex;align-items:center;gap:10px;}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;font-weight:800;letter-spacing:.2px;text-transform: none;
+    padding:6px 10px;border-radius:999px;background:#eef2ff;color:#123b9b;border:1px solid #c7d2fe;
+  }
+  .badge.ok   {background:#e8fff3;color:#065f46;border-color:#bbf7d0;}
+  .badge.warn {background:#fff7e8;color:#8a4b0f;border-color:#fde7c3;}
+  .badge.err  {background:#ffecec;color:#7f1d1d;border-color:#fecaca;}
+
+  /* Recording pill */
+  .rec-pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:6px 12px;border-radius:999px;font-weight:900;font-size:12px;
+    background:#e8fff3;border:1px solid #bbf7d0;color:#065f46;opacity:.55;box-shadow:var(--shadow);
+    transition:opacity .2s ease,transform .2s ease;
+  }
+  .rec-dot{width:10px;height:10px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 0 0 rgba(13,178,91,.45);}
+  .rec-on{opacity:1;}
+  .rec-on .rec-dot{animation:pulse 1.8s ease-out infinite;}
+  .rec-muted{opacity:.8;background:#fff7e8;border-color:#fde7c3;color:#8a4b0f;}
+  .rec-muted .rec-dot{background:var(--accent-amber);box-shadow:0 0 0 0 rgba(246,200,76,.35);}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(13,178,91,.55);}
+    70%{box-shadow:0 0 0 12px rgba(13,178,91,0);}
+    100%{box-shadow:0 0 0 0 rgba(13,178,91,0);}
+  }
+
+  /* Layout */
+  .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;}
+  @media (max-width:980px){.grid{grid-template-columns:1fr;}}
+
+  .panel{
+    background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px; box-shadow:var(--shadow);
+  }
+  .panel h3{margin:0 0 10px 0;font-size:14px;letter-spacing:.2px;color:var(--muted);}
+
+  .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0;}
+  .stack{display:grid;gap:10px;}
+
+  button{
+    background:#f3f6ff;color:#0f172a;border:1px solid #c7d2fe;border-radius:10px;
+    padding:10px 12px;font-weight:800;letter-spacing:.2px;cursor:pointer;
+  }
+  button:hover{border-color:#99aefc}
+  button.primary{background:var(--brand-blue);border-color:var(--brand-blue-600);color:#fff;}
+  button.primary:hover{filter:brightness(.95);}
+  button.warning{background:#fff1e6;border-color:#ffd2b1;color:#7a3410;}
+  input[type="text"]{
+    background:#fff;color:var(--text);border:1px solid var(--border);border-radius:10px;
+    padding:10px 12px;min-width:280px;
+  }
+  .hint{color:var(--muted);font-size:12px;}
+
+  .feed{
+    background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px;
+    height:44vh;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    line-height:1.45;white-space:pre-wrap;
+  }
+  .line{margin:0 0 8px 0;}
+  .user .tag{color:#8a4b0f;}
+  .assistant .tag{color:var(--brand-blue);}
+  .system .tag{color:#64748b;}
+  .text{color:#0f172a;}
+  .divider{height:1px;background:var(--border);margin:10px 0;}
+
+  /* Debug (hidden for operators) */
+  .debug { display: none; }
+  .debug.show { display: block; }
+
+  #log{
+    white-space:pre-wrap;background:#fbfcff;color:#344256;padding:10px;border-radius:10px;
+    max-height:24vh;overflow:auto;border:1px solid #var(--border);
+  }
+  a.report{color:#var(--link);text-decoration:underline;}
+
+  /* ---- Updated CSS + Header tweaks (override base) ---- */
+
+  /* Centered header layout */
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  /* Make Lakeview name more prominent */
+  .brand.centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .brandstack.big .lakeview {
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: var(--brand-blue);
+  }
+
+  .brandstack.big .industries {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.45em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .status-bar.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+  }
+</style>
+
+<div class="container">
+  <!-- Updated CSS + Header Snippet (drop-in replacement) -->
+  <div class="header">
+    <div class="brand centered">
+      <img src="/static/lakeview-logo.png" alt="Lakeview Industries logo" onerror="this.style.display='none'">
+      <div class="brandstack big">
+        <div class="lakeview">Lakeview</div>
+        <div class="industries">Industries&nbsp;AI</div>
+      </div>
+    </div>
+
+    <div class="status-bar center">
+      <div id="statusBadge" class="badge">Disconnected</div>
+      <div id="recPill" class="rec-pill" title="Mic status">
+        <div class="rec-dot"></div><span id="recLabel">Idle</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Left: Interaction + Transcript -->
+    <div class="panel">
+      <h3>Live Interaction</h3>
+
+      <div class="row">
+        <button id="connect" class="primary">Connect</button>
+        <button id="disconnect">Disconnect</button>
+        <button id="mute">Mute Mic</button>
+        <button id="unmute">Unmute Mic</button>
+        <button id="respond">Prompt Reply</button>
+        <span class="hint">Session: <code id="sid">(hidden)</code></span>
+      </div>
+
+      <div class="row">
+        <label for="instructions" class="hint">Instructions</label>
+        <input id="instructions" type="text" value="You are Lakeview’s troubleshooting assistant. Be concise, BLUF style." />
+        <button id="apply">Apply</button>
+      </div>
+
+      <div class="row">
+        <label for="note" class="hint">Operator note (optional)</label>
+        <input id="note" type="text" placeholder="e.g., Laminator A: bubbles after roll change; web 30 m/min; nip 2.1 kN." />
+        <button id="logNote">Log to Scribe</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div>
+        <div class="hint" style="margin-bottom:6px;">Transcript (auto-updates)</div>
+        <div id="feed" class="feed"></div>
+      </div>
+    </div>
+
+    <!-- Right: Actions + Report -->
+    <div class="panel">
+      <h3>Actions</h3>
+      <div class="stack">
+        <button id="summarize" class="primary">Summarize &amp; Save Report</button>
+        <div id="reportLink" class="hint">No report yet.</div>
+        <audio id="out" autoplay style="width:100%; margin-top:6px;"></audio>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Debug console (hidden for operators) -->
+      <div id="debugWrap" class="debug">
+        <div class="hint">Debug console</div>
+        <pre id="log"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let pc, dc, micStream, outEl, logEl;
+let sid = null;
+
+// assistant buffer
+let currentAssistant = "";
+
+// STT sidecar
+let sttRecorder = null, sttStream = null;
+
+// UI helpers
+const statusBadge = () => document.getElementById("statusBadge");
+const recPill     = () => document.getElementById("recPill");
+const recLabel    = () => document.getElementById("recLabel");
+const feedEl      = () => document.getElementById("feed");
+
+const log = (m)=>{ if(!logEl)return; logEl.textContent+=m+"\n"; logEl.scrollTop=logEl.scrollHeight; };
+
+/* ---------- Same-origin fetch helper ---------- */
+async function postJSON(path, body){
+  const res = await fetch(path, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(body)
+  });
+  if(!res.ok) throw new Error(`${path} -> ${res.status}`);
+  return res.json();
+}
+
+function setReportLink(link){
+  document.getElementById("reportLink").innerHTML =
+    `<a class="report" href="${link}" target="_blank" rel="noopener">Open session report</a>`;
+}
+
+function setBadge(text, cls=""){ const el=statusBadge(); el.className=`badge ${cls}`.trim(); el.textContent=text; }
+
+function appendLine(role,text){
+  if(!text) return;
+  const line=document.createElement("div");
+  line.className=`line ${role}`;
+  const tag=document.createElement("span"); tag.className="tag";
+  tag.textContent = role==="user" ? "Operator:" : role==="assistant" ? "Assistant:" : "System:";
+  const content=document.createElement("span"); content.className="text"; content.textContent=" "+text;
+  line.appendChild(tag); line.appendChild(content);
+  const el=feedEl(); el.appendChild(line); el.scrollTop=el.scrollHeight;
+}
+
+/* Recording pill state */
+function setRecState({on=false, muted=false}={}){
+  const pill=recPill(); pill.classList.remove("rec-on","rec-muted");
+  if(on) pill.classList.add("rec-on"); if(muted) pill.classList.add("rec-muted");
+  recLabel().textContent = on ? (muted ? "Recording (muted)" : "Recording") : "Idle";
+}
+
+/* Extract text from realtime events */
+function extractTextFromEvent(msg){
+  const texts=[];
+  if(typeof msg.delta==="string") texts.push(msg.delta);
+  if(msg.delta && typeof msg.delta.text==="string") texts.push(msg.delta.text);
+  if(Array.isArray(msg.content)){ for(const c of msg.content||[]){ if(c?.text) texts.push(c.text);
+    if(Array.isArray(c?.content)){ for(const k of c.content){ if(k?.text) texts.push(k.text); }}}}
+  if(typeof msg.text==="string" && msg.text.trim()) texts.push(msg.text);
+  if(msg.item && Array.isArray(msg.item.content)){ for(const it of msg.item.content){ if(it?.text) texts.push(it.text); } }
+  return texts.join(" ").trim();
+}
+
+/* STT sidecar */
+async function startSTT(){
+  if(!micStream) return;
+  sttStream = new MediaStream(micStream.getAudioTracks());
+  let mimeType="audio/webm"; if(!MediaRecorder.isTypeSupported(mimeType)) mimeType="audio/ogg";
+  sttRecorder=new MediaRecorder(sttStream,{mimeType,audioBitsPerSecond:48000});
+  sttRecorder.ondataavailable=async(ev)=>{
+    if(!ev.data||!ev.data.size) return;
+    const form=new FormData();
+    form.append("session_id", sid);
+    form.append("file", ev.data, mimeType==="audio/webm" ? "chunk.webm":"chunk.ogg");
+    try{
+      const res=await fetch("/api/stt/chunk",{method:"POST",body:form});
+      if(res.ok){ const js=await res.json().catch(()=>null); if(js?.text?.trim()) appendLine("user",js.text.trim()); }
+    }catch(e){ log("stt error: "+e.message); }
+  };
+  sttRecorder.start(3000);
+  setRecState({on:true,muted:false});
+}
+
+function stopSTT(){
+  try{ if(sttRecorder&&sttRecorder.state!=="inactive") sttRecorder.stop(); }catch{}
+  sttRecorder=null;
+  if(sttStream){ sttStream.getTracks().forEach(t=>t.stop()); sttStream=null; }
+  setRecState({on:false,muted:false});
+}
+
+/* Realtime connect */
+async function connect(){
+  sid=(crypto?.randomUUID?.()||Math.random().toString(36).slice(2));
+  document.getElementById("sid").textContent="(set)";
+
+  setBadge("Connecting…","warn");
+
+  const tokRes=await fetch("/api/realtime/token",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})});
+  if(!tokRes.ok){ setBadge("Token error","err"); log("token error: "+tokRes.status); return; }
+  const tok=await tokRes.json(); const EPHEMERAL=tok.client_secret; const MODEL=tok.model||"gpt-4o-realtime-preview";
+
+  const pcCfg={}; // default
+  pc=new RTCPeerConnection(pcCfg); pc.onconnectionstatechange=()=>log("pc state: "+pc.connectionState);
+
+  outEl=document.getElementById("out"); pc.ontrack=(ev)=>{ outEl.srcObject=ev.streams[0]; outEl.play().catch(()=>{}); };
+
+  dc=pc.createDataChannel("oai-events",{}); dc.onopen=()=>{
+    setBadge("Connected","ok"); appendLine("system","Session started.");
+    postJSON("/api/scribe/event",{session_id:sid,role:"system",text:"session started"}).catch(()=>{});
+    dc.send(JSON.stringify({type:"session.update",session:{voice:"verse",modalities:["audio","text"],turn_detection:{type:"server_vad"}}}));
+    dc.send(JSON.stringify({type:"response.create",response:{modalities:["audio"],instructions:"Audio check."}}));
+  };
+  dc.onclose=()=>{ setBadge("Disconnected",""); };
+
+  dc.onmessage=async(e)=>{
+    let msg; try{ msg=JSON.parse(e.data); }catch{ return; }
+    const text = extractTextFromEvent(msg);
+    if(text) currentAssistant += (currentAssistant ? " " : "") + text;
+
+    if(msg.type==="response.completed" || msg.type==="response.error"){
+      const finalText=currentAssistant.trim(); currentAssistant="";
+      if(finalText){ appendLine("assistant", finalText);
+        postJSON("/api/scribe/event",{session_id:sid,role:"assistant",text:finalText}).catch(()=>{}); }
+    }
+  };
+
+  // mic
+  micStream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+  pc.addTransceiver("audio",{direction:"sendrecv"});
+  micStream.getAudioTracks().forEach(t=>pc.addTrack(t,micStream));
+
+  // sdp
+  const offer=await pc.createOffer(); await pc.setLocalDescription(offer);
+  const sdpRes=await fetch(`https://api.openai.com/v1/realtime?model=${encodeURIComponent(MODEL)}`,{
+    method:"POST",headers:{"Authorization":`Bearer ${EPHEMERAL}`,"Content-Type":"application/sdp","OpenAI-Beta":"realtime=v1"}, body:offer.sdp
+  });
+  if(!sdpRes.ok){ setBadge("SDP error","err"); return; }
+  const answer={type:"answer",sdp:await sdpRes.text()}; await pc.setRemoteDescription(answer);
+
+  // instructions
+  const instr=document.getElementById("instructions").value.trim();
+  if(instr && dc && dc.readyState==="open"){
+    dc.send(JSON.stringify({type:"session.update",session:{instructions:instr}}));
+    postJSON("/api/scribe/event",{session_id:sid,role:"user",text:`Instructions: ${instr}`}).catch(()=>{});
+    appendLine("system","Instructions applied.");
+  }
+
+  await startSTT();
+  if(dc && dc.readyState==="open"){
+    dc.send(JSON.stringify({type:"response.create",response:{instructions:"Acknowledge and wait for my voice."}}));
+  }
+}
+
+/* Controls */
+function disconnect(){
+  try{ if(dc) dc.close(); }catch{}
+  if(pc){ pc.getSenders()?.forEach(s=>s.track&&s.track.stop()); pc.getReceivers()?.forEach(r=>r.track&&r.track.stop()); try{ pc.close(); }catch{} }
+  stopSTT(); dc=null; pc=null; setBadge("Disconnected",""); appendLine("system","Session ended.");
+}
+function mute(){ if(!micStream) return; micStream.getAudioTracks().forEach(t=>t.enabled=false); setRecState({on:true,muted:true}); appendLine("system","Mic muted."); }
+function unmute(){ if(!micStream) return; micStream.getAudioTracks().forEach(t=>t.enabled=true); setRecState({on:true,muted:false}); appendLine("system","Mic unmuted."); }
+function applyInstructions(){ if(!dc||dc.readyState!=="open") return;
+  const instr=document.getElementById("instructions").value.trim();
+  dc.send(JSON.stringify({type:"session.update",session:{instructions:instr}}));
+  postJSON("/api/scribe/event",{session_id:sid,role:"user",text:`Instructions: ${instr}`}).catch(()=>{});
+  appendLine("system","Instructions applied.");
+}
+async function promptReply(){ if(!dc||dc.readyState!=="open") return;
+  dc.send(JSON.stringify({type:"response.create",response:{instructions:"Respond briefly and wait for next user input."}}));
+}
+async function logOperatorNote(){
+  const el=document.getElementById("note"); const txt=el.value.trim(); if(!sid||!txt) return;
+  await postJSON("/api/scribe/event",{session_id:sid,role:"user",text:txt});
+  appendLine("user",txt); el.value="";
+}
+
+/* Summarize (server-side) */
+async function summarizeAndSave(){
+  if(!sid) return;
+  try{ const res=await postJSON("/api/scribe/summarize",{session_id:sid}); setReportLink(res.report_url); }
+  catch(e){ /* silent for operators */ }
+}
+
+/* Debug visibility: ?debug=1 or Shift+D */
+(function(){
+  const dbg=document.getElementById("debugWrap");
+  const params=new URLSearchParams(location.search);
+  if(params.get("debug")==="1"){ dbg.classList.add("show"); }
+  window.addEventListener("keydown",(e)=>{ if(e.shiftKey && e.key.toLowerCase()==="d"){ dbg.classList.toggle("show"); }});
+})();
+
+/* Wire UI */
+window.addEventListener("load",()=>{
+  logEl=document.getElementById("log");
+  document.getElementById("connect").onclick=connect;
+  document.getElementById("disconnect").onclick=disconnect;
+  document.getElementById("mute").onclick=mute;
+  document.getElementById("unmute").onclick=unmute;
+  document.getElementById("apply").onclick=applyInstructions;
+  document.getElementById("respond").onclick=promptReply;
+  document.getElementById("summarize").onclick=summarizeAndSave;
+  document.getElementById("logNote").onclick=logOperatorNote;
+});
+</script>
