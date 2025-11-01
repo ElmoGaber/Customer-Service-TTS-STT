@@ -1,0 +1,25 @@
+{
+  "output_path": "output/model",
+  "datasets": [
+    {
+      "name": "male_voice",
+      "path": "data/male",
+      "language": "en"
+    },
+    {
+      "name": "female_voice",
+      "path": "data/female",
+      "language": "en"
+    },
+    {
+      "name": "saudi_voice",
+      "path": "data/saudi",
+      "language": "ar"
+    }
+  ],
+  "batch_size": 8,
+  "num_epochs": 10,
+  "use_cuda": true,
+  "save_every_epoch": true,
+  "model_name": "tts_models/multilingual/multi-dataset/xtts_v2"
+}

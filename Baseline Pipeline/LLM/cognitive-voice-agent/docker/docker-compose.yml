@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  cva:
+    build: .
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
