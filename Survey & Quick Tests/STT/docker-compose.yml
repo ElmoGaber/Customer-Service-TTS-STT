@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  whisper:
+    build: .
+    container_name: whisper_dev
+    image: whisper-dev:latest
+    volumes:
+      - .:/app
+    command: python tests/smoke_test_whisper.py
+    environment:
+      - PYTHONUNBUFFERED=1
+    tty: true
