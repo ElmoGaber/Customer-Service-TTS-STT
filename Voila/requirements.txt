@@ -1,0 +1,34 @@
+# -----------------------------------------------------------------
+# ملف requirements.txt لمشروع maitrix-org/Voila
+# -----------------------------------------------------------------
+#
+# هذا الملف يحتوي على المكتبات الأساسية.
+# ملاحظة: تم تثبيت بعض المكتبات (مثل pydantic) بإصدارات محددة
+# لتجنب التعارض (conflicts) مع بيئة Colab.
+
+# --- مكتبات PyTorch و NVIDIA ---
+torch
+torchvision
+torchaudio
+flash-attn
+
+# --- مكتبات الصوت (الأساسية) ---
+soundfile
+librosa
+pyannote.audio  # (مهمة للـ VAD وتحديد مين اللي بيتكلم)
+
+# --- مكتبات الواجهة (UI) ---
+gradio
+gradio-client
+
+# --- مكتبات مساعدة (Data & Utilities) ---
+jsonlines
+transformers
+huggingface-hub
+einops
+accelerate
+sentencepiece
+
+# --- تصليح التعارض (Conflict Fix) ---
+# هذا السطر مهم جدًا لحل مشكلة التعارض مع Gradio
+pydantic<2.12
